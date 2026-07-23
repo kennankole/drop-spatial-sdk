@@ -21,7 +21,8 @@ dependencies it actually needs.
 4. Add the module to CI: nothing to do — `.github/workflows/ci.yml`
    discovers every `go.mod` in the repo and runs build/vet/test/lint
    against each.
-5. Tag releases as `<dir>/vX.Y.Z` (e.g. `routing/v0.1.0`).
+5. Releases are automatic (see below) — the first merge to `main` that
+   touches the new module's directory cuts its initial `v0.1.0` tag.
 
 ## Conventions
 
@@ -38,6 +39,38 @@ dependencies it actually needs.
 - Every network-calling method should notify an `Observer` of its outcome,
   so applications can wire liveness alarms without the SDK depending on
   a specific metrics library.
+
+## Releases
+
+Every push to `main` runs `.github/scripts/release.sh`, which tags and
+releases each module independently based on the commits since its last
+`<dir>/vX.Y.Z` tag that touched files under that module's directory.
+There's no manual tagging step and no release PR to merge — the commit
+messages on `main` are what decide what ships and how the version bumps,
+so they need a [Conventional Commits](https://www.conventionalcommits.org/)
+subject line:
+
+| Subject prefix | Effect |
+|---|---|
+| `fix:`, `perf:` | patch bump |
+| `feat:` | minor bump |
+| `!` after the type/scope (e.g. `feat!:`), or a `BREAKING CHANGE:` footer | major bump |
+| anything else (`docs:`, `chore:`, `refactor:`, `test:`, `ci:`, ...) | no release on its own |
+
+A module with commits of several kinds since its last tag gets the
+highest-priority bump among them (major beats minor beats patch) — the
+lower-priority commits ride along in that release rather than being
+skipped. A module with no prior tag at all gets an initial `v0.1.0`
+unconditionally on its first qualifying merge, regardless of commit type.
+
+Because this runs with no review step before the tag goes out, get the
+commit type right — a `fix:` that should have been a `feat!:` still ships,
+just under the wrong version number. Preview what a push to `main` would
+do without creating anything:
+
+```
+.github/scripts/release.sh --dry-run
+```
 
 ## Before submitting
 
