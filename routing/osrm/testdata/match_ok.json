@@ -1,0 +1,16 @@
+{
+  "code": "Ok",
+  "matchings": [
+    {
+      "confidence": 0.87,
+      "distance": 1250.4,
+      "duration": 142.7,
+      "geometry": "hnomAmscfeAtcBqlD~{B_|B",
+      "legs": [
+        { "distance": 620.1, "duration": 70.3 },
+        { "distance": 630.3, "duration": 72.4 }
+      ]
+    }
+  ],
+  "tracepoints": []
+}

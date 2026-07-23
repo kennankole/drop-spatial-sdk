@@ -1,0 +1,36 @@
+{
+  "code": "Ok",
+  "routes": [
+    {
+      "geometry": "hnomAmscfeAtcBqlD~{B_|B",
+      "legs": [
+        {
+          "distance": 1250.4,
+          "duration": 142.7,
+          "steps": [
+            {
+              "distance": 620.1,
+              "duration": 70.3,
+              "geometry": "hnomAmscfeAtcBqlD",
+              "name": "Moi Avenue",
+              "maneuver": { "type": "depart", "modifier": "" }
+            },
+            {
+              "distance": 630.3,
+              "duration": 72.4,
+              "geometry": "~rrmA_aifeA~{B_|B",
+              "name": "Tom Mboya Street",
+              "maneuver": { "type": "arrive", "modifier": "left" }
+            }
+          ]
+        }
+      ],
+      "distance": 1250.4,
+      "duration": 142.7
+    }
+  ],
+  "waypoints": [
+    { "hint": "abc", "distance": 3.1, "name": "Moi Avenue", "location": [36.817223, -1.286389] },
+    { "hint": "def", "distance": 5.2, "name": "Tom Mboya Street", "location": [36.822, -1.29] }
+  ]
+}

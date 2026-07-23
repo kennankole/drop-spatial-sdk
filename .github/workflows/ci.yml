@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      # Pinned to the version this repo's .golangci.yaml was validated
+      # against; bump deliberately, not via @latest drift.
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
+            | sh -s -- -b "$(go env GOPATH)/bin" v2.11.4
+
+      # This monorepo holds one Go module per library (routing/ today,
+      # future libraries alongside it). Discover every module rather than
+      # hardcoding a path, so adding a new module doesn't require a CI edit.
+      # Every module lints against the shared root .golangci.yaml.
+      - name: Build, lint, and test each module
+        run: |
+          set -eu
+          config="$GITHUB_WORKSPACE/.golangci.yaml"
+          for gomod in $(find . -name go.mod -not -path './.git/*'); do
+            dir=$(dirname "$gomod")
+            echo "::group::$dir"
+            (
+              cd "$dir"
+              echo "-- gofmt --"
+              unformatted=$(gofmt -l .)
+              if [ -n "$unformatted" ]; then
+                echo "The following files are not gofmt-formatted:"
+                echo "$unformatted"
+                exit 1
+              fi
+
+              echo "-- go vet --"
+              go vet ./...
+
+              echo "-- golangci-lint (includes staticcheck) --"
+              golangci-lint run --config "$config" ./...
+
+              echo "-- go build --"
+              go build ./...
+
+              echo "-- go test -race --"
+              go test -race ./...
+            )
+            echo "::endgroup::"
+          done
