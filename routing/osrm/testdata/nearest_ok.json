@@ -1,0 +1,7 @@
+{
+  "code": "Ok",
+  "waypoints": [
+    { "location": [36.817300, -1.286400], "distance": 4.2, "name": "Moi Avenue" },
+    { "location": [36.817500, -1.286500], "distance": 22.7, "name": "Kimathi Street" }
+  ]
+}
